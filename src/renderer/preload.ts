@@ -6,6 +6,8 @@ const ipc = {
     ipcRenderer.invoke('video:create', scene.referenceImage, scene.prompt),
   getProjects: (): Promise<Project[]> =>
     ipcRenderer.invoke('getProjects'),
+  createProject: (name: string): Promise<Project> =>
+    ipcRenderer.invoke('createProject', name),
 }
 
 declare global {

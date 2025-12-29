@@ -5,6 +5,7 @@ type ProjectsContextValue = {
   projects: Project[];
   currentProject: Project | null;
   loading: boolean;
+  createProject: (name: string) => Promise<void>;
 };
 
 const ProjectsContext = createContext<ProjectsContextValue | null>(null);
@@ -22,8 +23,13 @@ const ProjectsProvider = ({ children }: { children: ReactNode }) => {
 
   const currentProject = projects[0] ?? null;
 
+  const createProject = async (name: string) => {
+    const project = await window.ipc.createProject(name);
+    setProjects((prev) => [...prev, project]);
+  };
+
   return (
-    <ProjectsContext.Provider value={{ projects, currentProject, loading }}>
+    <ProjectsContext.Provider value={{ projects, currentProject, loading, createProject }}>
       {children}
     </ProjectsContext.Provider>
   );

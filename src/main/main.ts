@@ -4,6 +4,7 @@ import started from 'electron-squirrel-startup';
 import OpenAI from 'openai';
 import { OPENAI_API_KEY } from '../shared/app-config';
 import { Store } from './core/store';
+import { Project } from '../shared/types';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -42,6 +43,17 @@ ipcMain.handle('video:poll', async (_event, videoId: string) => {
 });
 
 ipcMain.handle('getProjects', () => Store.projects);
+
+ipcMain.handle('createProject', (_event, name: string) => {
+  const project: Project = {
+    id: crypto.randomUUID(),
+    name,
+    scenes: [],
+  };
+  Store.projects.push(project);
+  Store.save();
+  return project;
+});
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({

@@ -2,7 +2,7 @@ import { StatusBadge } from '../components/status-badge';
 import { useProjects } from '../contexts/projects-context';
 
 const App = () => {
-  const { currentProject, loading } = useProjects();
+  const { currentProject, loading, createProject } = useProjects();
 
   if (loading) {
     return (
@@ -14,8 +14,14 @@ const App = () => {
 
   if (!currentProject) {
     return (
-      <div className="min-h-screen bg-zinc-900 text-zinc-100 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-900 text-zinc-100 flex flex-col items-center justify-center gap-4">
         <p className="text-zinc-400">No projects found</p>
+        <button
+          onClick={() => createProject('Untitled Project')}
+          className="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 rounded transition-colors"
+        >
+          Create project
+        </button>
       </div>
     );
   }
