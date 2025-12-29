@@ -1,8 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { Scene } from 'src/shared/types';
+import { Project, Scene } from 'src/shared/types';
+
 const ipc = {
   generateVideo: (scene: Scene) =>
     ipcRenderer.invoke('video:create', scene.referenceImage, scene.prompt),
+  getProjects: (): Promise<Project[]> =>
+    ipcRenderer.invoke('getProjects'),
 }
 
 declare global {

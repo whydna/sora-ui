@@ -1,20 +1,20 @@
 import ElectronStore from 'electron-store';
-import { Scene } from 'src/shared/types';
+import { Project } from 'src/shared/types';
 
 const electronStore = new ElectronStore();
 
 const Store = {
-  scenes: [] as Scene[],
-  
+  projects: [] as Project[],
+
   load() {
-    if (electronStore.get('scenes')) {
-      this.scenes = electronStore.get('scenes', [])
-        .map((data: unknown) => data as Scene);
+    if (electronStore.get('projects')) {
+      this.projects = electronStore.get('projects', [])
+        .map((data: unknown) => data as Project);
     }
   },
 
   save() {
-    electronStore.set('scenes', this.scenes);
+    electronStore.set('projects', this.projects);
   }
 }
 

@@ -1,8 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import { App } from './pages/app';
+import { ProjectsProvider } from './contexts/projects-context';
+
 const Index = () => {
   return (
-    <App />
+    <ProjectsProvider>
+      <App />
+    </ProjectsProvider>
   );
 };
 
