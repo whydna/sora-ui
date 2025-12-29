@@ -1,17 +1,24 @@
-type Project = {
-  scenes: Scene[];
-}
-
-type Scene = {
-  name: string;
-  prompt: string;
-  referenceImage: string;
-  renders: Render[];
-}
+type RenderStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 type Render = {
+  id: string;
   soraVideoId: string;
-}
+  status: RenderStatus;
+  videoPath?: string;
+};
 
-export type { Scene };
+type Scene = {
+  id: string;
+  name: string;
+  prompt: string;
+  referenceImagePath: string;
+  renders: Render[];
+};
 
+type Project = {
+  id: string;
+  name: string;
+  scenes: Scene[];
+};
+
+export type { Project, Scene, Render, RenderStatus };

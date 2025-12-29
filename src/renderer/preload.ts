@@ -1,2 +1,15 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+import { contextBridge, ipcRenderer } from 'electron';
+import { Scene } from 'src/shared/types';
+const ipc = {
+  generateVideo: (scene: Scene) =>
+    ipcRenderer.invoke('video:create', scene.referenceImage, scene.prompt),
+}
+
+declare global {
+  interface Window {
+    ipc: typeof ipc;
+  }
+}
+
+
+contextBridge.exposeInMainWorld('ipc', ipc);

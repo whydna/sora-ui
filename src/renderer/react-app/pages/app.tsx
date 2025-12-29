@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import OpenAI from 'openai';
 
 type VideoStatus = 'idle' | 'generating' | 'polling' | 'completed' | 'failed';
 
@@ -12,15 +11,11 @@ type Scene = {
   videoUrl?: string;
 };
 
-const openai = new OpenAI({
-  apiKey: 'z0tDSqgnzT7jG79n7HI936hYW6Hz39ZjnAecnj_eDQsXDMQhgVggvMaNoe948ZkvChqn8ow8ftT3BlbkFJVGxi6ynNQ84AGKcxru5PbtjeKGDySX4mHnbIkVsmvvrzB04KRpf_YD9mRxr4r5NhtqcRwNxFcA',
-  dangerouslyAllowBrowser: true,
-});
 
 const initialScenes: Scene[] = [
   {
-    name: 'opening',
-    image: 'opening.png',
+    name: 'open',
+    image: 'open.png',
     prompt: `Scene 1 — Opening Establishing Shot
 - Wide cinematic establishing shot, slow dolly-in.
 - A luxurious, dimly lit casino poker room at night.
@@ -50,36 +45,12 @@ const initialScenes: Scene[] = [
   },
 ];
 
-async function createVideo(imageFile: File, prompt: string): Promise<string> {
-  const video = await openai.videos.create({
-    model: 'sora-2',
-    input_reference: imageFile,
-    size: '1280x720',
-    prompt,
-  });
-  return video.id;
-}
-
-async function pollVideo(videoId: string): Promise<{ status: string; url?: string; error?: string }> {
-  const video = await openai.videos.retrieve(videoId);
-  
-  if (video.status === 'completed') {
-    // Download the video content URL
-    const response = await openai.videos.downloadContent(videoId);
-    return { status: 'completed', url: response.url };
-  } else if (video.status === 'failed') {
-    return { status: 'failed', error: video.error?.message };
-  }
-  
-  return { status: video.status };
-}
-
 async function waitForVideo(
   videoId: string, 
   onStatus: (msg: string) => void
 ): Promise<{ url?: string; error?: string }> {
   while (true) {
-    const result = await pollVideo(videoId);
+    const result = await window.electronAPI.pollVideo(videoId);
     onStatus(`Status: ${result.status}`);
     
     if (result.status === 'completed') {
@@ -129,13 +100,14 @@ const App = () => {
     updateScene(scene.name, { status: 'generating', message: 'Starting...' });
 
     try {
-      // Fetch the image from public folder
+      // Fetch the image and convert to base64 for IPC
       const imageResponse = await fetch(`/${scene.image}`);
       const imageBlob = await imageResponse.blob();
-      const imageFile = new File([imageBlob], scene.image, { type: 'image/png' });
+      const arrayBuffer = await imageBlob.arrayBuffer();
+      const imageBase64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
       updateScene(scene.name, { message: 'Creating video job...' });
-      const videoId = await createVideo(imageFile, scene.prompt);
+      const videoId = await window.electronAPI.createVideo(imageBase64, scene.image, scene.prompt);
       
       updateScene(scene.name, { status: 'polling', message: `Job ID: ${videoId}` });
       
