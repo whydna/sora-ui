@@ -1,10 +1,8 @@
-import { useState } from 'react';
-import { StatusBadge } from '../components/StatusBadge';
+import { StatusBadge } from '../components/status-badge';
 import { useProjects } from '../contexts/projects-context';
 
 const App = () => {
   const { currentProject, loading } = useProjects();
-  const [isGenerating, setIsGenerating] = useState(false);
 
   if (loading) {
     return (
@@ -23,22 +21,6 @@ const App = () => {
   }
 
   const scenes = currentProject.scenes;
-
-  const handleGenerate = async (sceneIndex: number) => {
-    const scene = scenes[sceneIndex];
-    setIsGenerating(true);
-    console.log('Generating scene:', scene.name);
-    // TODO: Implement video generation
-    setIsGenerating(false);
-  };
-
-  const handleGenerateAll = async () => {
-    setIsGenerating(true);
-    for (let i = 0; i < scenes.length; i++) {
-      await handleGenerate(i);
-    }
-    setIsGenerating(false);
-  };
 
   return (
     <div className="min-h-screen bg-zinc-900 text-zinc-100 p-8">
@@ -82,12 +64,11 @@ const App = () => {
                     </pre>
                   </td>
                   <td className="px-4 py-4">
-                    <StatusBadge status="idle" />
+                    <StatusBadge status={scene.renders[0].status} />
                   </td>
                   <td className="px-4 py-4">
                     <button
-                      onClick={() => handleGenerate(index)}
-                      disabled={isGenerating}
+                      onClick={() => {}}
                       className="px-3 py-1.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-500 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded transition-colors"
                     >
                       Generate
@@ -97,16 +78,6 @@ const App = () => {
               ))}
             </tbody>
           </table>
-        </div>
-
-        <div className="mt-6 flex justify-end">
-          <button 
-            onClick={handleGenerateAll}
-            disabled={isGenerating}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
-          >
-            {isGenerating ? 'Generating...' : 'Generate All Scenes'}
-          </button>
         </div>
       </div>
     </div>

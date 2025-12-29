@@ -76,3 +76,7 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+app.on('before-quit', () => {
+  Store.save();
+});  
