@@ -1,4 +1,4 @@
-import { StatusBadge } from '../components/status-badge';
+import { ImageSelect } from '../components/image-select';
 import { useProjects } from '../contexts/projects-context';
 
 const App = () => {
@@ -62,17 +62,10 @@ const App = () => {
                     />
                   </td>
                   <td className="px-4 py-4">
-                    {scene.referenceImagePath ? (
-                      <img
-                        src={`/${scene.referenceImagePath}`}
-                        alt={scene.name}
-                        className="w-32 h-20 object-cover rounded border border-zinc-600"
-                      />
-                    ) : (
-                      <div className="w-32 h-20 rounded border border-zinc-600 border-dashed flex items-center justify-center text-zinc-500 text-xs">
-                        No image
-                      </div>
-                    )}
+                    <ImageSelect
+                      value={scene.referenceImagePath}
+                      onChange={(path) => updateScene(scene.id, { referenceImagePath: path })}
+                    />
                   </td>
                   <td className="px-4 py-4 max-w-md">
                     <textarea
