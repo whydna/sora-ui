@@ -13,22 +13,35 @@ const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
     // value is an absolute path, so we need to create a file URL for it
     if (value) {
       setPreviewUrl(`local-file://${value}`);
-      return;
+    } else {
+      setPreviewUrl('');
     }
-   
   }, [value]);
 
-  const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      const filePath = window.ipc.getPathForFile(file);
-      onChange(filePath);
-      setPreviewUrl(`local-file://${filePath}`);
-    }
-  };
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    /*
+     * Fix for electron/react-dropzone issue where drag/drop files don't get the full path.
+     * See: https://github.com/electron/electron/issues/44600#issuecomment-2465774352
+     */
+    getFilesFromEvent: async (event) => {
+      if ('dataTransfer' in event) {
+        return Array.from(event.dataTransfer.files);
+      }
+      if ('target' in event) {
+        const target = event.target as HTMLInputElement;
+        return Array.from(target.files ?? []);
+      }
+      return [];
+    },
+    onDrop: (acceptedFiles) => {
+      const file = acceptedFiles[0];
+      if (file) {
+        const filePath = window.ipc.getPathForFile(file);
+        if (filePath) {
+          onChange(filePath);
+        }
+      }
+    },
     accept: { 'image/*': [] },
     multiple: false,
   });
