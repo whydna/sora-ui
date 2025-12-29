@@ -1,5 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, protocol, net } from 'electron';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import started from 'electron-squirrel-startup';
 import OpenAI from 'openai';
 import { OPENAI_API_KEY } from '../shared/app-config';
@@ -10,6 +11,11 @@ import { Project, Scene } from '../shared/types';
 if (started) {
   app.quit();
 }
+
+// Register custom protocol for serving local files
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'local-file', privileges: { secure: true, supportFetchAPI: true, stream: true } }
+]);
 
 const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
@@ -103,7 +109,15 @@ const createWindow = () => {
   mainWindow.webContents.openDevTools();
 };
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  // Handle local-file:// protocol requests
+  protocol.handle('local-file', (request) => {
+    const filePath = decodeURIComponent(request.url.slice('local-file://'.length));
+    return net.fetch(pathToFileURL(filePath).href);
+  });
+
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

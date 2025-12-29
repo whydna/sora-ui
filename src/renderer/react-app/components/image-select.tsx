@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 type ImageSelectProps = {
@@ -9,12 +9,21 @@ type ImageSelectProps = {
 const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
   const [previewUrl, setPreviewUrl] = useState<string>('');
 
+  useEffect(() => {
+    // value is an absolute path, so we need to create a file URL for it
+    if (value) {
+      setPreviewUrl(`local-file://${value}`);
+      return;
+    }
+   
+  }, [value]);
+
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
       const filePath = window.ipc.getPathForFile(file);
       onChange(filePath);
-      setPreviewUrl(URL.createObjectURL(file));
+      setPreviewUrl(`local-file://${filePath}`);
     }
   };
 
