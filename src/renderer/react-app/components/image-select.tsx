@@ -42,8 +42,8 @@ const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
         isDragActive
           ? 'border-indigo-500 bg-indigo-500/10'
           : value
-          ? 'border-zinc-600 hover:border-zinc-500'
-          : 'border-zinc-600 border-dashed hover:border-zinc-500'
+          ? 'border-gray-600 hover:border-gray-500'
+          : 'border-gray-600 border-dashed hover:border-gray-500'
       }`}
     >
       <input {...getInputProps()} />
@@ -54,7 +54,7 @@ const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
           className="w-full h-full object-cover rounded"
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs text-center px-2">
+        <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs text-center px-2">
           {isDragActive ? 'Drop here' : 'Drop image or click'}
         </div>
       )}

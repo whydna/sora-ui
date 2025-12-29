@@ -7,7 +7,7 @@ type StatusBadgeProps = {
 
 const StatusBadge = ({ status, message }: StatusBadgeProps) => {
   const styles: Record<RenderStatus, string> = {
-    pending: 'bg-zinc-600 text-zinc-200',
+    pending: 'bg-gray-600 text-gray-200',
     processing: 'bg-amber-500 text-amber-950 animate-pulse',
     completed: 'bg-emerald-500 text-emerald-950',
     failed: 'bg-red-500 text-red-950',
@@ -19,7 +19,7 @@ const StatusBadge = ({ status, message }: StatusBadgeProps) => {
         {status}
       </span>
       {message && (
-        <span className="text-xs text-zinc-400 max-w-[200px] truncate" title={message}>
+        <span className="text-xs text-gray-400 max-w-[200px] truncate" title={message}>
           {message}
         </span>
       )}
