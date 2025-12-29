@@ -63,7 +63,7 @@ const App = () => {
                   </td>
                   <td className="px-4 py-4">
                     <ImageSelect
-                      value={scene.referenceImagePath}
+                      value={`local-file://${scene.referenceImagePath}`}
                       onChange={(path) => updateScene(scene.id, { referenceImagePath: path })}
                     />
                   </td>

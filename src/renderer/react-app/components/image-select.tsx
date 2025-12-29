@@ -7,17 +7,6 @@ type ImageSelectProps = {
 };
 
 const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
-  const [previewUrl, setPreviewUrl] = useState<string>('');
-
-  useEffect(() => {
-    // value is an absolute path, so we need to create a file URL for it
-    if (value) {
-      setPreviewUrl(`local-file://${value}`);
-    } else {
-      setPreviewUrl('');
-    }
-  }, [value]);
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     /*
      * Fix for electron/react-dropzone issue where drag/drop files don't get the full path.
@@ -58,9 +47,9 @@ const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
       }`}
     >
       <input {...getInputProps()} />
-      {previewUrl ? (
+      {value ? (
         <img
-          src={previewUrl}
+          src={value}
           alt="Selected image"
           className="w-full h-full object-cover rounded"
         />
