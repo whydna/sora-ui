@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 type ImageSelectProps = {
-  value: string;
+  value: string | null;
   onChange: (path: string) => void;
 };
 

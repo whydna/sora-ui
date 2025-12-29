@@ -1,11 +1,15 @@
-import { app, BrowserWindow, ipcMain, protocol, net } from 'electron';
+import { app, BrowserWindow, ipcMain, net, protocol } from 'electron';
+import started from 'electron-squirrel-startup';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import started from 'electron-squirrel-startup';
 import OpenAI from 'openai';
 import { OPENAI_API_KEY } from '../shared/app-config';
-import { Store } from './core/store';
 import { Project, Scene } from '../shared/types';
+import { Store } from './core/store';
+
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY,
+});
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -17,15 +21,11 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'local-file', privileges: { secure: true, supportFetchAPI: true, stream: true } }
 ]);
 
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-});
-
 // IPC Handlers for video generation
 ipcMain.handle('generateVideo', async (_event, imageBase64: string, fileName: string, prompt: string) => {
   const buffer = Buffer.from(imageBase64, 'base64');
   const imageFile = new File([buffer], fileName, { type: 'image/png' });
-  
+
   const video = await openai.videos.create({
     model: 'sora-2',
     input_reference: imageFile,
@@ -37,14 +37,14 @@ ipcMain.handle('generateVideo', async (_event, imageBase64: string, fileName: st
 
 // ipcMain.handle('video:poll', async (_event, videoId: string) => {
 //   const video = await openai.videos.retrieve(videoId);
-  
+
 //   if (video.status === 'completed') {
 //     const response = await openai.videos.downloadContent(videoId);
 //     return { status: 'completed', url: response.url };
 //   } else if (video.status === 'failed') {
 //     return { status: 'failed', error: video.error?.message };
 //   }
-  
+
 //   return { status: video.status };
 // });
 
