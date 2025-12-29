@@ -6,6 +6,7 @@ type ProjectsContextValue = {
   currentProject: Project | null;
   loading: boolean;
   createProject: (name: string) => Promise<void>;
+  addScene: () => Promise<void>;
 };
 
 const ProjectsContext = createContext<ProjectsContextValue | null>(null);
@@ -28,8 +29,18 @@ const ProjectsProvider = ({ children }: { children: ReactNode }) => {
     setProjects((prev) => [...prev, project]);
   };
 
+  const addScene = async () => {
+    if (!currentProject) return;
+    const updatedProject = await window.ipc.addScene(currentProject.id);
+    if (updatedProject) {
+      setProjects((prev) =>
+        prev.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+      );
+    }
+  };
+
   return (
-    <ProjectsContext.Provider value={{ projects, currentProject, loading, createProject }}>
+    <ProjectsContext.Provider value={{ projects, currentProject, loading, createProject, addScene }}>
       {children}
     </ProjectsContext.Provider>
   );

@@ -8,6 +8,8 @@ const ipc = {
     ipcRenderer.invoke('getProjects'),
   createProject: (name: string): Promise<Project> =>
     ipcRenderer.invoke('createProject', name),
+  addScene: (projectId: string): Promise<Project | null> =>
+    ipcRenderer.invoke('addScene', projectId),
 }
 
 declare global {

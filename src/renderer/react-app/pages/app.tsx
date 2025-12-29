@@ -2,7 +2,7 @@ import { StatusBadge } from '../components/status-badge';
 import { useProjects } from '../contexts/projects-context';
 
 const App = () => {
-  const { currentProject, loading, createProject } = useProjects();
+  const { currentProject, loading, createProject, addScene } = useProjects();
 
   if (loading) {
     return (
@@ -58,11 +58,17 @@ const App = () => {
                     {index + 1} {scene.name}
                   </td>
                   <td className="px-4 py-4">
-                    <img
-                      src={`/${scene.referenceImagePath}`}
-                      alt={scene.name}
-                      className="w-32 h-20 object-cover rounded border border-zinc-600"
-                    />
+                    {scene.referenceImagePath ? (
+                      <img
+                        src={`/${scene.referenceImagePath}`}
+                        alt={scene.name}
+                        className="w-32 h-20 object-cover rounded border border-zinc-600"
+                      />
+                    ) : (
+                      <div className="w-32 h-20 rounded border border-zinc-600 border-dashed flex items-center justify-center text-zinc-500 text-xs">
+                        No image
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-4 max-w-md">
                     <pre className="text-xs text-zinc-300 whitespace-pre-wrap font-mono leading-relaxed">
@@ -70,7 +76,11 @@ const App = () => {
                     </pre>
                   </td>
                   <td className="px-4 py-4">
-                    <StatusBadge status={scene.renders[0].status} />
+                    {scene.renders[0] ? (
+                      <StatusBadge status={scene.renders[0].status} />
+                    ) : (
+                      <span className="text-zinc-500 text-xs">-</span>
+                    )}
                   </td>
                   <td className="px-4 py-4">
                     <button
@@ -85,6 +95,13 @@ const App = () => {
             </tbody>
           </table>
         </div>
+
+        <button
+          onClick={addScene}
+          className="mt-4 px-4 py-2 text-sm font-medium bg-zinc-700 hover:bg-zinc-600 rounded transition-colors"
+        >
+          + Add Scene
+        </button>
       </div>
     </div>
   );

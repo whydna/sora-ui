@@ -4,7 +4,7 @@ import started from 'electron-squirrel-startup';
 import OpenAI from 'openai';
 import { OPENAI_API_KEY } from '../shared/app-config';
 import { Store } from './core/store';
-import { Project } from '../shared/types';
+import { Project, Scene } from '../shared/types';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -51,6 +51,22 @@ ipcMain.handle('createProject', (_event, name: string) => {
     scenes: [],
   };
   Store.projects.push(project);
+  Store.save();
+  return project;
+});
+
+ipcMain.handle('addScene', (_event, projectId: string) => {
+  const project = Store.projects.find((p) => p.id === projectId);
+  if (!project) return null;
+
+  const scene: Scene = {
+    id: crypto.randomUUID(),
+    name: 'Untitled Scene',
+    prompt: '',
+    referenceImagePath: '',
+    renders: [{ id: crypto.randomUUID(), soraVideoId: '', status: 'pending' }],
+  };
+  project.scenes.push(scene);
   Store.save();
   return project;
 });
