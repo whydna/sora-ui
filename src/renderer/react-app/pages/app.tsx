@@ -2,7 +2,7 @@ import { StatusBadge } from '../components/status-badge';
 import { useProjects } from '../contexts/projects-context';
 
 const App = () => {
-  const { currentProject, loading, createProject, addScene } = useProjects();
+  const { currentProject, loading, createProject, addScene, updateScene } = useProjects();
 
   if (loading) {
     return (
@@ -32,7 +32,7 @@ const App = () => {
     <div className="min-h-screen bg-zinc-900 text-zinc-100 p-8">
       <div className="max-w-6xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-400 mb-2">
             Sora Video Generator
           </h1>
           <p className="text-zinc-400">
@@ -44,18 +44,22 @@ const App = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-zinc-700 bg-zinc-800/50">
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">#</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">Name</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">Reference</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">Prompt</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">Status</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">Actions</th>
               </tr>
             </thead>
             <tbody>
               {scenes.map((scene, index) => (
                 <tr key={scene.id} className="border-b border-zinc-700/50 hover:bg-zinc-700/30 transition-colors align-top">
-                  <td className="px-4 py-4 text-zinc-500 font-mono text-sm">
-                    {index + 1} {scene.name}
+                  <td className="px-4 py-4">
+                    <input
+                      type="text"
+                      value={scene.name}
+                      onChange={(e) => updateScene(scene.id, { name: e.target.value })}
+                      className="bg-transparent text-zinc-300 text-sm border-b border-transparent hover:border-zinc-600 focus:border-zinc-500 focus:outline-none px-1 py-0.5"
+                    />
                   </td>
                   <td className="px-4 py-4">
                     {scene.referenceImagePath ? (
@@ -71,16 +75,13 @@ const App = () => {
                     )}
                   </td>
                   <td className="px-4 py-4 max-w-md">
-                    <pre className="text-xs text-zinc-300 whitespace-pre-wrap font-mono leading-relaxed">
-                      {scene.prompt}
-                    </pre>
-                  </td>
-                  <td className="px-4 py-4">
-                    {scene.renders[0] ? (
-                      <StatusBadge status={scene.renders[0].status} />
-                    ) : (
-                      <span className="text-zinc-500 text-xs">-</span>
-                    )}
+                    <textarea
+                      value={scene.prompt}
+                      onChange={(e) => updateScene(scene.id, { prompt: e.target.value })}
+                      placeholder="Enter prompt..."
+                      rows={3}
+                      className="w-full bg-zinc-900/50 text-xs text-zinc-300 whitespace-pre-wrap font-mono leading-relaxed border border-zinc-700 hover:border-zinc-600 focus:border-zinc-500 focus:outline-none rounded px-2 py-1.5 resize-none"
+                    />
                   </td>
                   <td className="px-4 py-4">
                     <button

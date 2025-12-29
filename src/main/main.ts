@@ -71,6 +71,18 @@ ipcMain.handle('addScene', (_event, projectId: string) => {
   return project;
 });
 
+ipcMain.handle('updateScene', (_event, projectId: string, sceneId: string, updates: Partial<Scene>) => {
+  const project = Store.projects.find((p) => p.id === projectId);
+  if (!project) return null;
+
+  const scene = project.scenes.find((s) => s.id === sceneId);
+  if (!scene) return null;
+
+  Object.assign(scene, updates);
+  Store.save();
+  return project;
+});
+
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1200,
