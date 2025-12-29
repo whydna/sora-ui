@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import { Project, Scene } from 'src/shared/types';
 
 const ipc = {
@@ -12,6 +12,8 @@ const ipc = {
     ipcRenderer.invoke('addScene', projectId),
   updateScene: (projectId: string, sceneId: string, updates: Partial<Scene>): Promise<Project | null> =>
     ipcRenderer.invoke('updateScene', projectId, sceneId, updates),
+  getPathForFile: (file: File): string =>
+    webUtils.getPathForFile(file),
 }
 
 declare global {

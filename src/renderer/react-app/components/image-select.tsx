@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 type ImageSelectProps = {
@@ -6,10 +7,14 @@ type ImageSelectProps = {
 };
 
 const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
+  const [previewUrl, setPreviewUrl] = useState<string>('');
+
   const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0] as File & { path: string };
-    if (file?.path) {
-      onChange(file.path);
+    const file = acceptedFiles[0];
+    if (file) {
+      const filePath = window.ipc.getPathForFile(file);
+      onChange(filePath);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
@@ -31,9 +36,9 @@ const ImageSelect = ({ value, onChange }: ImageSelectProps) => {
       }`}
     >
       <input {...getInputProps()} />
-      {value ? (
+      {previewUrl ? (
         <img
-          src={`file://${value}`}
+          src={previewUrl}
           alt="Selected image"
           className="w-full h-full object-cover rounded"
         />
