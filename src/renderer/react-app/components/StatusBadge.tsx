@@ -1,15 +1,14 @@
-type VideoStatus = 'idle' | 'generating' | 'polling' | 'completed' | 'failed';
+import { RenderStatus } from '../../../shared/types';
 
 type StatusBadgeProps = {
-  status: VideoStatus;
+  status: RenderStatus;
   message?: string;
 };
 
 const StatusBadge = ({ status, message }: StatusBadgeProps) => {
-  const styles: Record<VideoStatus, string> = {
-    idle: 'bg-zinc-600 text-zinc-200',
-    generating: 'bg-amber-500 text-amber-950 animate-pulse',
-    polling: 'bg-blue-500 text-blue-950 animate-pulse',
+  const styles: Record<RenderStatus, string> = {
+    pending: 'bg-zinc-600 text-zinc-200',
+    processing: 'bg-amber-500 text-amber-950 animate-pulse',
     completed: 'bg-emerald-500 text-emerald-950',
     failed: 'bg-red-500 text-red-950',
   };
@@ -28,5 +27,5 @@ const StatusBadge = ({ status, message }: StatusBadgeProps) => {
   );
 };
 
-export { StatusBadge, type VideoStatus, type StatusBadgeProps };
+export { StatusBadge, type StatusBadgeProps };
 
