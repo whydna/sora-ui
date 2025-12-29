@@ -3,7 +3,7 @@ import { Project, Scene } from 'src/shared/types';
 
 const ipc = {
   generateVideo: (scene: Scene) =>
-    ipcRenderer.invoke('video:create', scene.referenceImagePath, scene.prompt),
+    ipcRenderer.invoke('generateVideo', scene.referenceImagePath, scene.prompt),
   getProjects: (): Promise<Project[]> =>
     ipcRenderer.invoke('getProjects'),
   createProject: (name: string): Promise<Project> =>

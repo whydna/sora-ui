@@ -16,7 +16,7 @@ const openai = new OpenAI({
 });
 
 // IPC Handlers for video generation
-ipcMain.handle('video:create', async (_event, imageBase64: string, fileName: string, prompt: string) => {
+ipcMain.handle('generateVideo', async (_event, imageBase64: string, fileName: string, prompt: string) => {
   const buffer = Buffer.from(imageBase64, 'base64');
   const imageFile = new File([buffer], fileName, { type: 'image/png' });
   
@@ -29,18 +29,18 @@ ipcMain.handle('video:create', async (_event, imageBase64: string, fileName: str
   return video.id;
 });
 
-ipcMain.handle('video:poll', async (_event, videoId: string) => {
-  const video = await openai.videos.retrieve(videoId);
+// ipcMain.handle('video:poll', async (_event, videoId: string) => {
+//   const video = await openai.videos.retrieve(videoId);
   
-  if (video.status === 'completed') {
-    const response = await openai.videos.downloadContent(videoId);
-    return { status: 'completed', url: response.url };
-  } else if (video.status === 'failed') {
-    return { status: 'failed', error: video.error?.message };
-  }
+//   if (video.status === 'completed') {
+//     const response = await openai.videos.downloadContent(videoId);
+//     return { status: 'completed', url: response.url };
+//   } else if (video.status === 'failed') {
+//     return { status: 'failed', error: video.error?.message };
+//   }
   
-  return { status: video.status };
-});
+//   return { status: video.status };
+// });
 
 ipcMain.handle('getProjects', () => Store.projects);
 
