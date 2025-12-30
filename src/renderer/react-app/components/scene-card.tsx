@@ -66,9 +66,6 @@ const SceneCard = ({ scene, onUpdate, onGenerate }: SceneCardProps) => {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <StatusBadge status={render.status} />
-                  <span className="text-xs text-gray-400 font-mono truncate">
-                    {render.videoPath || render.soraVideoId}
-                  </span>
                 </div>
                 {render.status === 'completed' && render.videoPath && (
                   <video
