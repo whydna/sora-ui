@@ -13,4 +13,8 @@ const getProjectsPath = () => {
   return path.join(app.getPath('userData'), 'projects');
 }
 
-export { getResourcesPath, getProjectsPath };
+const getProjectPath = (projectId: string) => {
+  return path.join(getProjectsPath(), projectId);
+}
+
+export { getResourcesPath, getProjectsPath, getProjectPath };

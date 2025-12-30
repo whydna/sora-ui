@@ -3,7 +3,9 @@ import started from 'electron-squirrel-startup';
 import path from 'node:path';
 import OpenAI from 'openai';
 import { Project, Scene, UserSettings } from '../shared/types';
+import { getProjectPath } from './core/paths';
 import { Store } from './core/store';
+import fs from 'node:fs/promises';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -30,14 +32,19 @@ ipcMain.handle('generateVideo', async (_event, imageBase64: string, fileName: st
 
 ipcMain.handle('getProjects', () => Store.projects);
 
-ipcMain.handle('createProject', (_event, name: string) => {
-  const project: Project = {
+ipcMain.handle('createProject', async (_event, name: string) => {
+  const project: Project = {  
     id: crypto.randomUUID(),
     name,
     scenes: [],
   };
   Store.projects.push(project);
   Store.save();
+  
+  // Create project directory
+  const projectDir = getProjectPath(project.id);
+  await fs.mkdir(projectDir, { recursive: true });
+  
   return project;
 });
 
