@@ -32,6 +32,8 @@ const FinalPreview = ({ scenes }: FinalPreviewProps) => {
         key={currentIndex}
         src={`file://${videos[currentIndex]}`}
         autoPlay
+        loop
+        muted
         onEnded={handleVideoEnd}
         className="w-full"
       />
