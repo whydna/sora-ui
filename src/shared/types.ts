@@ -21,4 +21,8 @@ type Project = {
   scenes: Scene[];
 };
 
-export type { Project, Scene, Render, RenderStatus };
+type UserSettings = {
+  openaiApiKey: string;
+};
+
+export type { Project, Scene, Render, RenderStatus, UserSettings };

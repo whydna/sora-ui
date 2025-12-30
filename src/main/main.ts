@@ -3,13 +3,8 @@ import started from 'electron-squirrel-startup';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import OpenAI from 'openai';
-import { OPENAI_API_KEY } from '../shared/app-config';
-import { Project, Scene } from '../shared/types';
+import { Project, Scene, UserSettings } from '../shared/types';
 import { Store } from './core/store';
-
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-});
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -25,6 +20,10 @@ protocol.registerSchemesAsPrivileged([
 ipcMain.handle('generateVideo', async (_event, imageBase64: string, fileName: string, prompt: string) => {
   const buffer = Buffer.from(imageBase64, 'base64');
   const imageFile = new File([buffer], fileName, { type: 'image/png' });
+
+  const openai = new OpenAI({
+    apiKey: Store.settings.openaiApiKey,
+  });
 
   const video = await openai.videos.create({
     model: 'sora-2',
@@ -87,6 +86,14 @@ ipcMain.handle('updateScene', (_event, projectId: string, sceneId: string, updat
   Object.assign(scene, updates);
   Store.save();
   return project;
+});
+
+ipcMain.handle('getSettings', () => Store.settings);
+
+ipcMain.handle('updateSettings', (_event, settings: Partial<UserSettings>) => {
+  Object.assign(Store.settings, settings);
+  Store.save();
+  return Store.settings;
 });
 
 const createWindow = () => {
