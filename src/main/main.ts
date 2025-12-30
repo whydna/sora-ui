@@ -3,12 +3,11 @@ import started from 'electron-squirrel-startup';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import OpenAI from 'openai';
-import { OPENAI_API_KEY } from '../shared/app-config';
-import { Project, Scene } from '../shared/types';
+import { Project, Scene, UserSettings } from '../shared/types';
 import { Store } from './core/store';
 
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
+let openai = new OpenAI({
+  apiKey: Store.settings.openaiApiKey,
 });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -87,6 +86,20 @@ ipcMain.handle('updateScene', (_event, projectId: string, sceneId: string, updat
   Object.assign(scene, updates);
   Store.save();
   return project;
+});
+
+ipcMain.handle('getSettings', () => Store.settings);
+
+ipcMain.handle('updateSettings', (_event, settings: Partial<UserSettings>) => {
+  Object.assign(Store.settings, settings);
+  Store.saveSettings();
+
+  // Reinitialize OpenAI client with new API key
+  openai = new OpenAI({
+    apiKey: Store.settings.openaiApiKey,
+  });
+
+  return Store.settings;
 });
 
 const createWindow = () => {

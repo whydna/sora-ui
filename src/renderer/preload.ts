@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
-import { Project, Scene } from 'src/shared/types';
+import { Project, Scene, UserSettings } from 'src/shared/types';
 
 const ipc = {
   generateVideo: (scene: Scene) =>
@@ -14,6 +14,10 @@ const ipc = {
     ipcRenderer.invoke('updateScene', projectId, sceneId, updates),
   getPathForFile: (file: File): string =>
     webUtils.getPathForFile(file),
+  getSettings: (): Promise<UserSettings> =>
+    ipcRenderer.invoke('getSettings'),
+  updateSettings: (settings: Partial<UserSettings>): Promise<UserSettings> =>
+    ipcRenderer.invoke('updateSettings', settings),
 }
 
 declare global {

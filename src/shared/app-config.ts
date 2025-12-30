@@ -1,3 +1,2 @@
-const OPENAI_API_KEY = '';
-
-export { OPENAI_API_KEY };
+// App configuration file
+// This file is reserved for future configuration options
