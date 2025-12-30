@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { FinalPreview } from '../components/final-preview';
 import { SceneCard } from '../components/scene-card';
 import { useProjects } from '../contexts/projects-context';
 
@@ -67,6 +68,8 @@ const App = () => {
         >
           + Add Scene
         </button>
+
+        <FinalPreview scenes={scenes} />
       </div>
     </div>
   );
