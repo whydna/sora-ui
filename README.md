@@ -2,18 +2,6 @@
 
 A desktop application for generating video scenes using OpenAI's Sora 2 API.
 
-## About
-
-Sora UI is an Electron-based desktop application that provides a user-friendly interface for creating and managing video generation projects with OpenAI's Sora API. Built with React, TypeScript, and Tailwind CSS, it allows users to create scenes with custom prompts and reference images, then generate videos through the Sora API.
-
-## Features
-
-- Create and manage multiple video generation projects
-- Add scenes with custom prompts and reference images
-- Track render status for each video generation request
-- Modern, dark-themed UI built with Tailwind CSS
-- Persistent local storage for projects
-
 ## Tech Stack
 
 - **Electron** - Desktop application framework
@@ -81,10 +69,6 @@ sora-ui/
 ├── resources/         # Application resources
 └── forge.config.ts    # Electron Forge configuration
 ```
-
-## License
-
-MIT
 
 ## Author
 
