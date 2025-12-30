@@ -1,6 +1,7 @@
 import { Scene } from '../../../shared/types';
 import { ImageSelect } from './image-select';
 import { StatusBadge } from './status-badge';
+import { FinalPreview } from './final-preview';
 
 type SceneCardProps = {
   scene: Scene;
@@ -52,7 +53,7 @@ const SceneCard = ({ scene, onUpdate, onGenerate }: SceneCardProps) => {
       </div>
 
       {/* Renders list */}
-      
+
       {scene.renders.length > 0 && (
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
@@ -60,14 +61,17 @@ const SceneCard = ({ scene, onUpdate, onGenerate }: SceneCardProps) => {
           </label>
           <div className="flex flex-col gap-2">
             {scene.renders.map((render) => (
-              <div
-                key={render.id}
-                className="flex items-center gap-3 bg-gray-900/50 rounded px-3 py-2 border border-gray-700/50"
-              >
-                <StatusBadge status={render.status} />
-                <span className="text-xs text-gray-400 font-mono truncate">
-                  {render.videoPath || render.soraVideoId}
-                </span>
+              <div key={render.id}>
+                {render.status === 'completed' && render.videoPath ? (
+                  <FinalPreview videoPath={render.videoPath} alt={`${scene.name} - ${render.id}`} />
+                ) : (
+                  <div className="flex items-center gap-3 bg-gray-900/50 rounded px-3 py-2 border border-gray-700/50">
+                    <StatusBadge status={render.status} />
+                    <span className="text-xs text-gray-400 font-mono truncate">
+                      {render.videoPath || render.soraVideoId}
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
