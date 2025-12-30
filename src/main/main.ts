@@ -6,17 +6,6 @@ import OpenAI from 'openai';
 import { Project, Scene, UserSettings } from '../shared/types';
 import { Store } from './core/store';
 
-let openai: OpenAI | null = null;
-
-function getOpenAIClient(): OpenAI {
-  if (!openai) {
-    openai = new OpenAI({
-      apiKey: Store.settings.openaiApiKey,
-    });
-  }
-  return openai;
-}
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
@@ -32,7 +21,11 @@ ipcMain.handle('generateVideo', async (_event, imageBase64: string, fileName: st
   const buffer = Buffer.from(imageBase64, 'base64');
   const imageFile = new File([buffer], fileName, { type: 'image/png' });
 
-  const video = await getOpenAIClient().videos.create({
+  const openai = new OpenAI({
+    apiKey: Store.settings.openaiApiKey,
+  });
+
+  const video = await openai.videos.create({
     model: 'sora-2',
     input_reference: imageFile,
     size: '1280x720',
@@ -100,10 +93,6 @@ ipcMain.handle('getSettings', () => Store.settings);
 ipcMain.handle('updateSettings', (_event, settings: Partial<UserSettings>) => {
   Object.assign(Store.settings, settings);
   Store.save();
-
-  // Reset OpenAI client to force reinitialization with new API key on next use
-  openai = null;
-
   return Store.settings;
 });
 
