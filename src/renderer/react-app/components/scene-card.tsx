@@ -26,7 +26,7 @@ const SceneCard = ({ scene, onUpdate, onGenerate }: SceneCardProps) => {
           />
         </div>
         <ImageSelect
-          value={scene.referenceImagePath ? `local-file://${scene.referenceImagePath}` : null}
+          value={scene.referenceImagePath ? `file://${scene.referenceImagePath}` : null}
           onChange={(path) => onUpdate({ referenceImagePath: path })}
         />
         <button
