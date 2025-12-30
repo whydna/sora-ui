@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { Project, Scene } from 'src/shared/types';
+import { Project, Scene } from '../../../shared/types';
 
 type ProjectsContextValue = {
   projects: Project[];
@@ -8,6 +8,7 @@ type ProjectsContextValue = {
   createProject: (name: string) => Promise<void>;
   addScene: () => Promise<void>;
   updateScene: (sceneId: string, updates: Partial<Scene>) => Promise<void>;
+  renderScene: (sceneId: string) => Promise<void>;
 };
 
 const ProjectsContext = createContext<ProjectsContextValue | null>(null);
@@ -50,8 +51,18 @@ const ProjectsProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const renderScene = async (sceneId: string) => {
+    if (!currentProject) return;
+    const updatedProject = await window.ipc.renderScene(currentProject.id, sceneId);
+    if (updatedProject) {
+      setProjects((prev) =>
+        prev.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+      );
+    }
+  };
+
   return (
-    <ProjectsContext.Provider value={{ projects, currentProject, loading, createProject, addScene, updateScene }}>
+    <ProjectsContext.Provider value={{ projects, currentProject, loading, createProject, addScene, updateScene, renderScene }}>
       {children}
     </ProjectsContext.Provider>
   );

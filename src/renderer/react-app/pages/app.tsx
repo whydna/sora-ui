@@ -3,7 +3,7 @@ import { SceneCard } from '../components/scene-card';
 import { useProjects } from '../contexts/projects-context';
 
 const App = () => {
-  const { currentProject, loading, createProject, addScene, updateScene } = useProjects();
+  const { currentProject, loading, createProject, addScene, updateScene, renderScene } = useProjects();
   const navigate = useNavigate();
 
   if (loading) {
@@ -56,7 +56,7 @@ const App = () => {
               key={scene.id}
               scene={scene}
               onUpdate={(updates) => updateScene(scene.id, updates)}
-              onGenerate={() => {}}
+              onGenerate={() => renderScene(scene.id)}
             />
           ))}
         </div>

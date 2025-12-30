@@ -1,9 +1,9 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
-import { Project, Scene, UserSettings } from 'src/shared/types';
+import { Project, Scene, UserSettings } from '../shared/types';
 
 const ipc = {
-  generateVideo: (scene: Scene) =>
-    ipcRenderer.invoke('generateVideo', scene.referenceImagePath, scene.prompt),
+  renderScene: (projectId: string, sceneId: string): Promise<Project | null> =>
+    ipcRenderer.invoke('renderScene', projectId, sceneId),
   getProjects: (): Promise<Project[]> =>
     ipcRenderer.invoke('getProjects'),
   createProject: (name: string): Promise<Project> =>

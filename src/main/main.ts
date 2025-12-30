@@ -1,11 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import started from 'electron-squirrel-startup';
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import OpenAI from 'openai';
-import { Project, Scene, UserSettings } from '../shared/types';
+import OpenAI, { toFile } from 'openai';
+import { Project, Render, Scene, UserSettings } from '../shared/types';
+import { resizeImage } from './core/images';
 import { getProjectPath } from './core/paths';
 import { Store } from './core/store';
-import fs from 'node:fs/promises';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -13,38 +14,86 @@ if (started) {
 }
 
 // IPC Handlers for video generation
-ipcMain.handle('generateVideo', async (_event, imageBase64: string, fileName: string, prompt: string) => {
-  const buffer = Buffer.from(imageBase64, 'base64');
-  const imageFile = new File([buffer], fileName, { type: 'image/png' });
+ipcMain.handle('renderScene', async (_event, projectId: string, sceneId: string) => {
+  const project = Store.projects.find((p) => p.id === projectId);
+  if (!project) return null;
+
+  const scene = project.scenes.find((s) => s.id === sceneId);
+  if (!scene) return null;
+
+  // Resize reference image
+  const imageBuffer = await resizeImage(scene.referenceImagePath);
+  const imageFile = await toFile(Buffer.from(imageBuffer));
 
   const openai = new OpenAI({
     apiKey: Store.settings.openaiApiKey,
   });
 
-  const video = await openai.videos.create({
+  // Create video job
+  const videoJob = await openai.videos.create({
     model: 'sora-2',
     input_reference: imageFile,
     size: '1280x720',
-    prompt,
+    prompt: scene.prompt,
   });
-  return video.id;
+
+  // Create render entry
+  const render: Render = {
+    id: crypto.randomUUID(),
+    soraVideoId: videoJob.id,
+    status: 'pending',
+  };
+  scene.renders.push(render);
+  Store.save();
+
+  // Poll for completion
+  let video = await openai.videos.retrieve(videoJob.id);
+  while (video.status === 'queued' || video.status === 'in_progress') {
+    await new Promise((r) => setTimeout(r, 5000));
+    video = await openai.videos.retrieve(videoJob.id);
+
+    // Update status to processing
+    if (video.status === 'in_progress' && render.status === 'pending') {
+      render.status = 'processing';
+      Store.save();
+    }
+  }
+
+  if (video.status === 'completed') {
+    // Download and save video
+    const response = await openai.videos.downloadContent(videoJob.id);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const projectDir = getProjectPath(projectId);
+    const videoPath = path.join(projectDir, `${render.id}.mp4`);
+    await fs.writeFile(videoPath, buffer);
+
+    render.status = 'completed';
+    render.videoPath = videoPath;
+  } else {
+    render.status = 'failed';
+  }
+
+  Store.save();
+  return project;
 });
 
 ipcMain.handle('getProjects', () => Store.projects);
 
 ipcMain.handle('createProject', async (_event, name: string) => {
-  const project: Project = {  
+  const project: Project = {
     id: crypto.randomUUID(),
     name,
     scenes: [],
   };
   Store.projects.push(project);
   Store.save();
-  
+
   // Create project directory
   const projectDir = getProjectPath(project.id);
   await fs.mkdir(projectDir, { recursive: true });
-  
+
   return project;
 });
 
