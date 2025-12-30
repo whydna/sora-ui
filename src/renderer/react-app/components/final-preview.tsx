@@ -7,6 +7,7 @@ type FinalPreviewProps = {
 
 const FinalPreview = ({ scenes }: FinalPreviewProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
 
   // Get latest completed video from each scene
   const videos = scenes
@@ -26,14 +27,21 @@ const FinalPreview = ({ scenes }: FinalPreviewProps) => {
     setCurrentIndex((i) => (i + 1) % videos.length);
   };
 
+  const toggleMute = () => {
+    setIsMuted((muted) => !muted);
+  };
+
   return (
     <div className="mt-8 bg-gray-800 rounded-lg overflow-hidden">
       <video
         key={currentIndex}
         src={`file://${videos[currentIndex]}`}
         autoPlay
+        loop
+        muted={isMuted}
         onEnded={handleVideoEnd}
-        className="w-full"
+        onClick={toggleMute}
+        className="w-full cursor-pointer"
       />
     </div>
   );

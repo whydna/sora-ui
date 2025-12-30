@@ -70,6 +70,9 @@ const SceneCard = ({ scene, onUpdate, onGenerate }: SceneCardProps) => {
                 {render.status === 'completed' && render.videoPath && (
                   <video
                     src={`file://${render.videoPath}`}
+                    autoPlay
+                    loop
+                    muted
                     controls
                     className="w-full max-w-lg rounded"
                   />
