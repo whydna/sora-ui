@@ -52,7 +52,7 @@ const SceneCard = ({ scene, onUpdate, onGenerate }: SceneCardProps) => {
       </div>
 
       {/* Renders list */}
-      
+
       {scene.renders.length > 0 && (
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
@@ -62,12 +62,23 @@ const SceneCard = ({ scene, onUpdate, onGenerate }: SceneCardProps) => {
             {scene.renders.map((render) => (
               <div
                 key={render.id}
-                className="flex items-center gap-3 bg-gray-900/50 rounded px-3 py-2 border border-gray-700/50"
+                className="flex flex-col gap-2 bg-gray-900/50 rounded p-3 border border-gray-700/50"
               >
-                <StatusBadge status={render.status} />
-                <span className="text-xs text-gray-400 font-mono truncate">
-                  {render.videoPath || render.soraVideoId}
-                </span>
+                <div className="flex items-center gap-3">
+                  <StatusBadge status={render.status} />
+                  <span className="text-xs text-gray-400 font-mono truncate">
+                    {render.videoPath || render.soraVideoId}
+                  </span>
+                </div>
+                {render.videoPath && (
+                  <video
+                    src={`local-file://${render.videoPath}`}
+                    autoPlay
+                    loop
+                    muted
+                    className="w-full rounded border border-gray-700"
+                  />
+                )}
               </div>
             ))}
           </div>
