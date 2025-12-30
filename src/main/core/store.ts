@@ -12,20 +12,13 @@ const Store = {
       this.projects = electronStore.get('projects', [])
         .map((data: unknown) => data as Project);
     }
-    this.loadSettings();
-  },
-
-  save() {
-    electronStore.set('projects', this.projects);
-  },
-
-  loadSettings() {
     if (electronStore.get('settings')) {
       this.settings = electronStore.get('settings', { openaiApiKey: '' }) as UserSettings;
     }
   },
 
-  saveSettings() {
+  save() {
+    electronStore.set('projects', this.projects);
     electronStore.set('settings', this.settings);
   }
 }
