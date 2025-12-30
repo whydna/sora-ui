@@ -23,7 +23,7 @@ ipcMain.handle('renderScene', async (_event, projectId: string, sceneId: string)
 
   // Resize reference image
   const imageBuffer = await resizeImage(scene.referenceImagePath);
-  const imageFile = await toFile(Buffer.from(imageBuffer));
+  const imageFile = await toFile(imageBuffer, 'reference.png', { type: 'image/png' });
 
   const openai = new OpenAI({
     apiKey: Store.settings.openaiApiKey,

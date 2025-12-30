@@ -37,7 +37,6 @@ const FinalPreview = ({ scenes }: FinalPreviewProps) => {
         key={currentIndex}
         src={`file://${videos[currentIndex]}`}
         autoPlay
-        loop
         muted={isMuted}
         onEnded={handleVideoEnd}
         onClick={toggleMute}
