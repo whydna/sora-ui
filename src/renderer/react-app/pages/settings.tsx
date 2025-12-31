@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useProjects } from '../contexts/projects-context';
 import { useSettings } from '../contexts/settings-context';
 import toast from 'react-hot-toast';
 
 const Settings = () => {
+  const { currentProject } = useProjects();
   const { settings, updateSettings } = useSettings();
   const navigate = useNavigate();
   const [apiKey, setApiKey] = useState(settings.openaiApiKey);
@@ -70,6 +72,20 @@ const Settings = () => {
               Cancel
             </button>
           </div>
+        </div>
+
+        <div className="bg-gray-800 rounded-lg p-6 mt-6">
+          <h2 className="text-lg font-medium text-gray-100 mb-2">Storage</h2>
+          <p className="text-sm text-gray-400 mb-4">
+            View and manage your project files
+          </p>
+          <button
+            onClick={() => currentProject && window.ipc.openPath(currentProject.path)}
+            disabled={!currentProject}
+            className="px-4 py-2 text-sm font-medium bg-gray-700 hover:bg-gray-600 rounded transition-colors disabled:opacity-50"
+          >
+            Open Project Folder
+          </button>
         </div>
       </div>
     </div>

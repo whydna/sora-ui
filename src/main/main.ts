@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import started from 'electron-squirrel-startup';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -79,20 +79,24 @@ ipcMain.handle('renderScene', async (_event, projectId: string, sceneId: string)
   return project;
 });
 
-ipcMain.handle('getProjects', () => Store.projects);
+ipcMain.handle('getProjects', () => {
+  return Store.projects.map((p) => ({ ...p, path: getProjectPath(p.id) }));
+});
 
 ipcMain.handle('createProject', async (_event, name: string) => {
+  const id = crypto.randomUUID();
+  const projectPath = getProjectPath(id);
+
   const project: Project = {
-    id: crypto.randomUUID(),
+    id,
     name,
+    path: projectPath,
     scenes: [],
   };
   Store.projects.push(project);
   Store.save();
 
-  // Create project directory
-  const projectDir = getProjectPath(project.id);
-  await fs.mkdir(projectDir, { recursive: true });
+  await fs.mkdir(projectPath, { recursive: true });
 
   return project;
 });
@@ -131,6 +135,10 @@ ipcMain.handle('updateSettings', (_event, settings: Partial<UserSettings>) => {
   Object.assign(Store.settings, settings);
   Store.save();
   return Store.settings;
+});
+
+ipcMain.handle('openPath', async (_event, path: string) => {
+  await shell.openPath(path);
 });
 
 const createWindow = () => {
