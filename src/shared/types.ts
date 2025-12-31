@@ -24,6 +24,7 @@ type Project = {
 
 type UserSettings = {
   openaiApiKey: string;
+  veoApiKey: string;
 };
 
 export type { Project, Scene, Render, RenderStatus, UserSettings };

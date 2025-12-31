@@ -8,13 +8,14 @@ const Settings = () => {
   const { currentProject } = useProjects();
   const { settings, updateSettings } = useSettings();
   const navigate = useNavigate();
-  const [apiKey, setApiKey] = useState(settings.openaiApiKey);
+  const [openaiApiKey, setOpenaiApiKey] = useState(settings.openaiApiKey);
+  const [veoApiKey, setVeoApiKey] = useState(settings.veoApiKey);
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateSettings({ openaiApiKey: apiKey });
+      await updateSettings({ openaiApiKey: openaiApiKey, veoApiKey });
       toast.success('Settings saved successfully');
     } catch (error) {
       toast.error('Failed to save settings');
@@ -41,19 +42,36 @@ const Settings = () => {
 
         <div className="bg-gray-800 rounded-lg p-6 space-y-6">
           <div>
-            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-200 mb-2">
+            <label htmlFor="openaiApiKey" className="block text-sm font-medium text-gray-200 mb-2">
               OpenAI API Key
             </label>
             <input
-              id="apiKey"
+              id="openaiApiKey"
               type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
+              value={openaiApiKey}
+              onChange={(e) => setOpenaiApiKey(e.target.value)}
               placeholder="sk-..."
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
             <p className="mt-2 text-sm text-gray-400">
               Your OpenAI API key is stored locally and used to generate videos with Sora 2 API
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="veoApiKey" className="block text-sm font-medium text-gray-200 mb-2">
+              Veo 3 API Key
+            </label>
+            <input
+              id="veoApiKey"
+              type="password"
+              value={veoApiKey}
+              onChange={(e) => setVeoApiKey(e.target.value)}
+              placeholder="AIza..."
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+            <p className="mt-2 text-sm text-gray-400">
+              Your Google Veo 3 API key is stored locally and used to generate videos with Veo 3
             </p>
           </div>
 
