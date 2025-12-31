@@ -18,6 +18,8 @@ const ipc = {
     ipcRenderer.invoke('getSettings'),
   updateSettings: (settings: Partial<UserSettings>): Promise<UserSettings> =>
     ipcRenderer.invoke('updateSettings', settings),
+  openPath: (path: string): Promise<void> =>
+    ipcRenderer.invoke('openPath', path),
 }
 
 declare global {

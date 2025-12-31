@@ -18,6 +18,7 @@ type Scene = {
 type Project = {
   id: string;
   name: string;
+  path: string;
   scenes: Scene[];
 };
 
