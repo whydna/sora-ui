@@ -5,7 +5,7 @@ const electronStore = new ElectronStore();
 
 const Store = {
   projects: [] as Project[],
-  settings: { openaiApiKey: '' } as UserSettings,
+  settings: { openaiApiKey: '', veoApiKey: '' } as UserSettings,
 
   load() {
     if (electronStore.get('projects')) {
@@ -13,7 +13,7 @@ const Store = {
         .map((data: unknown) => data as Project);
     }
     if (electronStore.get('settings')) {
-      this.settings = electronStore.get('settings', { openaiApiKey: '' }) as UserSettings;
+      this.settings = electronStore.get('settings', { openaiApiKey: '', veoApiKey: '' }) as UserSettings;
     }
   },
 

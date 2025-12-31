@@ -10,7 +10,7 @@ type SettingsContextValue = {
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [settings, setSettings] = useState<UserSettings>({ openaiApiKey: '' });
+  const [settings, setSettings] = useState<UserSettings>({ openaiApiKey: '', veoApiKey: '' });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
